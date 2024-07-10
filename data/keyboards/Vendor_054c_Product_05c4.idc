@@ -49,7 +49,20 @@ sensor.gyroscope.power = 0.8
 # be treated as many small movements of consecutive touches, which are then
 # inhibited by the click wiggle filter.
 #
-# Since this touchpad does not seem vulnerable to click wiggle, we can safely
-# disable drumroll detection due to speed changes (by setting the speed change
-# threshold very high, since there's no boolean control property).
-gestureProp.Drumroll_Max_Speed_Change_Factor = 1000000000
+# Since this touchpad doesn't seem to have drumroll issues, we can safely
+# disable drumroll detection.
+gestureProp.Drumroll_Suppression_Enable = 0
+
+# Because of the way this touchpad is positioned, touches around the edges are
+# no more likely to be palms than ones in the middle, so remove the edge zones
+# from the palm classifier to increase the usable area of the pad.
+gestureProp.Palm_Edge_Zone_Width = 0
+gestureProp.Tap_Exclusion_Border_Width = 0
+
+# Touchpad is small, scale up the pointer movements to make it more practical
+# to use.
+gestureProp.Point_X_Out_Scale = 2.5
+gestureProp.Point_Y_Out_Scale = 2.5
+
+# TODO(b/351326684): Ideally "Scroll X Out Scale" and "Scroll Y Out Scale"
+# should be adjusted as well. Currently not supported in IDC files.
