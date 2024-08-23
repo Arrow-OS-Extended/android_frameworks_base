@@ -109,5 +109,7 @@
 
     <!-- Boost Framework -->
     <java-symbol type="bool" name="config_supportsBoostFramework" />
-
+    
+    <!-- Keybox -->
+    <java-symbol type="array" name="config_certifiedKeybox" />
 </resources>
