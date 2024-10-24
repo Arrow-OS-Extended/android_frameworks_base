@@ -75,6 +75,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.android.internal.util.PropImitationHooks;
+
 import javax.crypto.SecretKey;
 
 /**
@@ -164,7 +166,7 @@ public class AndroidKeyStoreSpi extends KeyStoreSpi {
 
     @Override
     public Certificate[] engineGetCertificateChain(String alias) {
-
+        PropImitationHooks.onEngineGetCertificateChain();
         KeyEntryResponse response = getKeyMetadata(alias);
 
         if (response == null || response.metadata.certificate == null) {

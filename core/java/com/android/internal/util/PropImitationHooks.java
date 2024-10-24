@@ -41,18 +41,20 @@ import java.util.Set;
 public class PropImitationHooks {
 
     private static final String TAG = "PropImitationHooks";
-    private static final boolean DEBUG = SystemProperties.getBoolean("debug.pihooks.log", false);
+    private static final boolean DEBUG = SystemProperties.getBoolean("persist.sys.debug.pihooks.log", false);
 
     private static final String PACKAGE_ARCORE = "com.google.ar.core";
     private static final String PACKAGE_GMS = "com.google.android.gms";
     private static final String PROCESS_GMS_UNSTABLE = PACKAGE_GMS + ".unstable";
     private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
+    private static final String PACKAGE_FINSKY = "com.android.vending";
     private static final String PACKAGE_NETFLIX = "com.netflix.mediaclient";
     private static final String PROP_HOOKS = "persist.sys.pihooks_";
     private static final String SPOOF_GPHOTOS = "persist.sys.pihooks_gphotos";
 
     private static final String PROP_SECURITY_PATCH = "persist.sys.pihooks.security_patch";
     private static final String PROP_FIRST_API_LEVEL = "persist.sys.pihooks.first_api_level";
+    private static final String PROP_DISABLE_BLOCK_KEY_ATTESTATION = "persist.sys.pihooks.disable_attestation_block";
 
     private static final ComponentName GMS_ADD_ACCOUNT_ACTIVITY = ComponentName.unflattenFromString(
             "com.google.android.gms/.auth.uiflows.minutemaid.MinuteMaidActivity");
@@ -91,14 +93,15 @@ public class PropImitationHooks {
 
     private static volatile String[] sCertifiedProps;
     private static volatile String sStockFp, sNetflixModel;
-    private static volatile boolean sSpoofPhotos;
+    private static volatile boolean sSpoofPhotos, sDisableBlockKeyAttestation;
 
     private static volatile String sProcessName;
-    private static volatile boolean sIsGms, sIsPhotos;
+    private static volatile boolean sIsGms, sIsPhotos, sIsFinsky;
 
     public static void setProps(Context context) {
         final String packageName = context.getPackageName();
         final String processName = Application.getProcessName();
+        sIsFinsky = packageName.equals(PACKAGE_FINSKY);
 
         if (TextUtils.isEmpty(packageName) || TextUtils.isEmpty(processName)) {
             Log.e(TAG, "Null package or process name");
@@ -115,6 +118,7 @@ public class PropImitationHooks {
         sStockFp = res.getString(R.string.config_stockFingerprint);
         sNetflixModel = res.getString(R.string.config_netflixSpoofModel);
         sSpoofPhotos = Boolean.parseBoolean(SystemProperties.get(SPOOF_GPHOTOS, "true"));
+        sDisableBlockKeyAttestation = Boolean.parseBoolean(SystemProperties.get(PROP_DISABLE_BLOCK_KEY_ATTESTATION, "false"));
 
         sProcessName = processName;
         sIsGms = packageName.equals(PACKAGE_GMS) && processName.equals(PROCESS_GMS_UNSTABLE);
@@ -257,6 +261,24 @@ private static void setCertifiedProps() {
             return false;
         }
         return gmsUid == callingUid;
+    }
+
+        private static boolean isCallerSafetyNet() {
+        return sIsGms && Arrays.stream(Thread.currentThread().getStackTrace())
+                .anyMatch(elem -> elem.getClassName().contains("DroidGuard"));
+    }
+
+    public static void onEngineGetCertificateChain() {
+        if (sDisableBlockKeyAttestation) {
+            dlog("Key attestation blocking is disabled by user");
+            return;
+        }
+
+        // Check stack for SafetyNet or Play Integrity
+        if (isCallerSafetyNet() || sIsFinsky) {
+            dlog("Blocked key attestation sIsGms=" + sIsGms + " sIsFinsky=" + sIsFinsky);
+            throw new UnsupportedOperationException();
+        }
     }
 
     public static boolean hasSystemFeature(String name, boolean def) {
