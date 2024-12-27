@@ -56,7 +56,7 @@ import android.view.Window;
 import android.view.WindowManagerGlobal;
 
 import com.android.internal.content.ReferrerIntent;
-import com.android.internal.util.PropImitationHooks;
+import com.android.internal.util.arrow.PropsHooksUtils;
 
 import java.io.File;
 import java.lang.annotation.Retention;
@@ -65,7 +65,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import com.android.internal.util.GamesPropsUtils;
 
 /**
  * Base class for implementing application instrumentation code.  When running
@@ -1245,8 +1244,7 @@ public class Instrumentation {
         Application app = getFactory(context.getPackageName())
                 .instantiateApplication(cl, className);
         app.attach(context);
-        PropImitationHooks.setProps(context);
-        GamesPropsUtils.setProps(context);
+        PropsHooksUtils.setProps(context);
         return app;
     }
 
@@ -1264,8 +1262,7 @@ public class Instrumentation {
             ClassNotFoundException {
         Application app = (Application)clazz.newInstance();
         app.attach(context);
-        PropImitationHooks.setProps(context);
-        GamesPropsUtils.setProps(context);
+        PropsHooksUtils.setProps(context);
         return app;
     }
 
