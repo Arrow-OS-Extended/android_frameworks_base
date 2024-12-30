@@ -142,7 +142,8 @@ class TaskPositioner implements IBinder.DeathRecipient {
                 if (!mTmpRect.equals(mWindowDragBounds)) {
                     Trace.traceBegin(TRACE_TAG_WINDOW_MANAGER,
                             "wm.TaskPositioner.resizeTask");
-                    resizeTask(RESIZE_MODE_USER);
+                    mService.mAtmService.resizeTask(
+                            mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
                     Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
                 }
             }
@@ -174,7 +175,8 @@ class TaskPositioner implements IBinder.DeathRecipient {
             if (wasResizing && !mTmpRect.equals(mWindowDragBounds)) {
                 // We were using fullscreen surface during resizing. Request
                 // resizeTask() one last time to restore surface to window size.
-                resizeTask(RESIZE_MODE_USER_FORCED);
+                mService.mAtmService.resizeTask(
+                        mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER_FORCED);
             }
 
             // Post back to WM to handle clean-ups. We still need the input
@@ -343,7 +345,10 @@ class TaskPositioner implements IBinder.DeathRecipient {
 
             // The WindowPositionerEventReceiver callbacks are delivered on the same handler so this
             // initial resize is always guaranteed to happen before subsequent drag resizes.
-            mService.mH.post(() -> resizeTask(RESIZE_MODE_USER_FORCED));
+            mService.mH.post(() -> {
+                mService.mAtmService.resizeTask(
+                        mTask.mTaskId, startBounds, RESIZE_MODE_USER_FORCED);
+            });
         }
 
         // Make sure we always have valid drag bounds even if the drag ends before any move events
@@ -455,16 +460,6 @@ class TaskPositioner implements IBinder.DeathRecipient {
 
         if (DEBUG_TASK_POSITIONING) Slog.d(TAG,
                 "updateWindowDragBounds: " + mWindowDragBounds);
-    }
-
-    private void resizeTask(int reason) {
-        try {
-            mService.mAtmService.resizeTask(mTask.mTaskId, mWindowDragBounds, reason);
-        } catch (IllegalArgumentException i) {
-            String msg = i.getMessage();
-            msg = msg == null ? "(null)" : msg;
-            Slog.e(TAG, "cannot resize task: " + msg);
-        }
     }
 
     public String toShortString() {
