@@ -777,7 +777,7 @@ public class AppTransition implements Dump {
             @Nullable Rect surfaceInsets, @Nullable Rect stableInsets, boolean isVoiceInteraction,
             boolean freeform, WindowContainer container) {
 
-        final boolean canCustomizeAppTransition = !freeform && container.canCustomizeAppTransition();
+        final boolean canCustomizeAppTransition = container.canCustomizeAppTransition();
 
         if (mNextAppTransitionOverrideRequested) {
             if (canCustomizeAppTransition || mOverrideTaskTransition) {
