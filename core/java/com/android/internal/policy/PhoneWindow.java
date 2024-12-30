@@ -923,8 +923,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             }
         }
 
-        // This will populate st.shownPanelView if needed
-        if ((st.shownPanelView == null && !initializePanelContent(st)) || !st.hasPanelItems()) {
+        if (!st.hasPanelItems()) {
             // Ensure that |st.decorView| has its actual content. Otherwise, an empty window can be
             // created and cause ANR.
             return;
