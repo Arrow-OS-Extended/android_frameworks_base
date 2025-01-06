@@ -96,6 +96,9 @@
 
                     <include layout="@layout/ongoing_call_chip" />
 
+                    <include layout="@layout/status_bar_ongoing_action_chip"
+                        android:id="@+id/status_bar_ongoing_action_chip" />
+
                     <com.android.systemui.statusbar.AlphaOptimizedFrameLayout
                         android:id="@+id/notification_icon_area"
                         android:layout_width="wrap_content"

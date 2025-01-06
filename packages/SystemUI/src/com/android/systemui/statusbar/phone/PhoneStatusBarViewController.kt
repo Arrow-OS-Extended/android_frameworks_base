@@ -24,6 +24,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.ImageView
+import android.widget.ProgressBar
 import com.android.systemui.Gefingerpoken
 import com.android.systemui.R
 import com.android.systemui.flags.FeatureFlags
@@ -31,6 +33,7 @@ import com.android.systemui.flags.Flags
 import com.android.systemui.shade.ShadeController
 import com.android.systemui.shade.ShadeLogger
 import com.android.systemui.shared.animation.UnfoldMoveFromCenterAnimator
+import com.android.systemui.statusbar.getOngoingActionProgressGroup
 import com.android.systemui.statusbar.policy.ConfigurationController
 import com.android.systemui.unfold.SysUIUnfoldComponent
 import com.android.systemui.unfold.UNFOLD_STATUS_BAR
@@ -143,6 +146,14 @@ class PhoneStatusBarViewController private constructor(
         }
     }
 
+    fun getOngoingActionProgressGroup(): OnGoingActionProgressGroup{
+        return OnGoingActionProgressGroup(
+            mView.findViewById(R.id.status_bar_ongoing_action_chip),
+            mView.findViewById(R.id.ongoing_action_app_icon) as ImageView,
+            mView.findViewById(R.id.app_action_progress) as ProgressBar,
+        )
+    }
+    
     inner class PhoneStatusBarViewTouchHandler : Gefingerpoken {
         override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
             onTouch(event)
