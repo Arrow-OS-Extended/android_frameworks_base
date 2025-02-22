@@ -5605,6 +5605,13 @@ public final class Settings {
          * Whether the phone vibrates on call connect
          * @hide
          */
+        public static final String ONGOING_ACTION_CHIP = "ongoing_action_chip";
+
+        /**
+         * Whether edge light is enabled.
+         * Default 0
+         * @hide
+         */
         public static final String VIBRATE_ON_CONNECT = "vibrate_on_connect";
 
         /**
