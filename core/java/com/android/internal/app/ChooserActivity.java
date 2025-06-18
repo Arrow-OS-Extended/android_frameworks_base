@@ -1316,9 +1316,9 @@ public class ChooserActivity extends ResolverActivity implements
                             -1,
                             false);
                     View firstImgView = getFirstVisibleImgPreviewView();
-                    // Action bar is user-independent, always start as primary
+                    // Action bar is user-independent, always start as the launching user
                     if (firstImgView == null) {
-                        safelyStartActivityAsUser(ti, getPersonalProfileUserHandle());
+                        safelyStartActivityAsUser(ti, UserHandle.of(UserHandle.myUserId()));
                         finish();
                     } else {
                         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(
