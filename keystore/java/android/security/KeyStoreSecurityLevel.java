@@ -154,8 +154,12 @@ public class KeyStoreSecurityLevel {
 
         for (KeyParameter kp : args) {
             switch (kp.tag) {
-                case Tag.ALGORITHM -> algorithm = kp.value.getAlgorithm();
-                case Tag.ATTESTATION_CHALLENGE -> attestationChallenge = kp.value.getBlob();
+		case Tag.ALGORITHM:
+		algorithm = kp.value.getAlgorithm();
+		break;
+		case Tag.ATTESTATION_CHALLENGE:
+		attestationChallenge = kp.value.getBlob();
+		break;
             }
         }
 

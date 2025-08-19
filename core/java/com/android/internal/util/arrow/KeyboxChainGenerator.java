@@ -19,7 +19,7 @@ import android.security.keystore.KeyProperties;
 import android.system.keystore2.KeyDescriptor;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
+import android.annotation.Nullable;
 
 import com.android.internal.org.bouncycastle.asn1.ASN1Boolean;
 import com.android.internal.org.bouncycastle.asn1.ASN1Encodable;
@@ -328,12 +328,24 @@ public final class KeyboxChainGenerator {
         return new DEROctetString(new DERSequence(applicationIdAA).getEncoded());
     }
 
-    record Digest(byte[] digest) {
+public static final class Digest {
+	private final byte[] digest;
+
+	public Digest(byte[] digest) {
+	this.digest = digest;
+	}
+
+	public byte[] getDigest() {
+	return digest;
+	}
+
         @Override
         public boolean equals(@Nullable Object o) {
-            if (o instanceof Digest d)
-                return Arrays.equals(digest, d.digest);
-            return false;
+	if (o instanceof Digest) {
+		Digest d = (Digest) o;
+		return Arrays.equals(digest, d.digest);
+		}
+	return false;
         }
 
         @Override
@@ -393,33 +405,58 @@ public final class KeyboxChainGenerator {
             for (var kp : params) {
                 var p = kp.value;
                 switch (kp.tag) {
-                    case Tag.KEY_SIZE -> keySize = p.getInteger();
-                    case Tag.ALGORITHM -> algorithm = p.getAlgorithm();
-                    case Tag.CERTIFICATE_SERIAL -> certificateSerial = new BigInteger(p.getBlob());
-                    case Tag.CERTIFICATE_NOT_BEFORE ->
-                            certificateNotBefore = new Date(p.getDateTime());
-                    case Tag.CERTIFICATE_NOT_AFTER ->
-                            certificateNotAfter = new Date(p.getDateTime());
-                    case Tag.CERTIFICATE_SUBJECT ->
-                            certificateSubject = new X500Name(new X500Principal(p.getBlob()).getName());
-                    case Tag.RSA_PUBLIC_EXPONENT -> rsaPublicExponent = new BigInteger(p.getBlob());
-                    case Tag.EC_CURVE -> {
-                        ecCurve = p.getEcCurve();
-                        ecCurveName = getEcCurveName(ecCurve);
-                    }
-                    case Tag.PURPOSE -> {
-                        purpose.add(p.getKeyPurpose());
-                    }
-                    case Tag.DIGEST -> {
-                        digest.add(p.getDigest());
-                    }
-                    case Tag.ATTESTATION_CHALLENGE -> attestationChallenge = p.getBlob();
-                    case Tag.ATTESTATION_ID_BRAND -> brand = p.getBlob();
-                    case Tag.ATTESTATION_ID_DEVICE -> device = p.getBlob();
-                    case Tag.ATTESTATION_ID_PRODUCT -> product = p.getBlob();
-                    case Tag.ATTESTATION_ID_MANUFACTURER -> manufacturer = p.getBlob();
-                    case Tag.ATTESTATION_ID_MODEL -> model = p.getBlob();
-                    case Tag.HARDWARE_TYPE -> securityLevel = p.getSecurityLevel();
+            case Tag.KEY_SIZE:
+                keySize = p.getInteger();
+                break;
+            case Tag.ALGORITHM:
+                algorithm = p.getAlgorithm();
+                break;
+            case Tag.CERTIFICATE_SERIAL:
+                certificateSerial = new BigInteger(p.getBlob());
+                break;
+            case Tag.CERTIFICATE_NOT_BEFORE:
+                certificateNotBefore = new Date(p.getDateTime());
+                break;
+            case Tag.CERTIFICATE_NOT_AFTER:
+                certificateNotAfter = new Date(p.getDateTime());
+                break;
+            case Tag.CERTIFICATE_SUBJECT:
+                certificateSubject = new X500Name(new X500Principal(p.getBlob()).getName());
+                break;
+            case Tag.RSA_PUBLIC_EXPONENT:
+                rsaPublicExponent = new BigInteger(p.getBlob());
+                break;
+            case Tag.EC_CURVE:
+                ecCurve = p.getEcCurve();
+                ecCurveName = getEcCurveName(ecCurve);
+                break;
+            case Tag.PURPOSE:
+                purpose.add(p.getKeyPurpose());
+                break;
+            case Tag.DIGEST:
+                digest.add(p.getDigest());
+                break;
+            case Tag.ATTESTATION_CHALLENGE:
+                attestationChallenge = p.getBlob();
+                break;
+            case Tag.ATTESTATION_ID_BRAND:
+                brand = p.getBlob();
+                break;
+            case Tag.ATTESTATION_ID_DEVICE:
+                device = p.getBlob();
+                break;
+            case Tag.ATTESTATION_ID_PRODUCT:
+                product = p.getBlob();
+                break;
+            case Tag.ATTESTATION_ID_MANUFACTURER:
+                manufacturer = p.getBlob();
+                break;
+            case Tag.ATTESTATION_ID_MODEL:
+                model = p.getBlob();
+                break;
+            case Tag.HARDWARE_TYPE:
+                securityLevel = p.getSecurityLevel();
+                break;
                 }
             }
         }
@@ -427,13 +464,24 @@ public final class KeyboxChainGenerator {
         private static String getEcCurveName(int curve) {
             String res;
             switch (curve) {
-                case EcCurve.CURVE_25519 -> res = "CURVE_25519";
-                case EcCurve.P_224 -> res = "secp224r1";
-                case EcCurve.P_256 -> res = "secp256r1";
-                case EcCurve.P_384 -> res = "secp384r1";
-                case EcCurve.P_521 -> res = "secp521r1";
-                default -> throw new IllegalArgumentException("unknown curve");
-            }
+		case EcCurve.CURVE_25519:
+		res = "CURVE_25519";
+		break;
+		case EcCurve.P_224:
+		res = "secp224r1";
+		break;
+		case EcCurve.P_256:
+		res = "secp256r1";
+		break;
+		case EcCurve.P_384:
+		res = "secp384r1";
+		break;
+		case EcCurve.P_521:
+		res = "secp521r1";
+		break;
+		default:
+		throw new IllegalArgumentException("unknown curve");
+		}
             return res;
         }
     }
