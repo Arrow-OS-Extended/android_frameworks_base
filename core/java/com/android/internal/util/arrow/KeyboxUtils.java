@@ -31,6 +31,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @hide
@@ -38,7 +39,29 @@ import java.util.Map;
 public class KeyboxUtils {
 
     private static final Map<Key, KeyEntryResponse> response = new HashMap<>();
-    public static record Key(int uid, String alias) {}
+    public static final class Key {
+    	public final int uid;
+    	public final String alias;
+
+    	public Key(int uid, String alias) {
+        	this.uid = uid;
+        	this.alias = alias;
+    	}
+
+    	@Override
+    	public boolean equals(Object o) {
+        	if (this == o) return true;
+        	if (!(o instanceof Key)) return false;
+        	Key key = (Key) o;
+        	return uid == key.uid && Objects.equals(alias, key.alias);
+    	}
+
+    	@Override
+    	public int hashCode() {
+        	return Objects.hash(uid, alias);
+    	}
+}
+
 
     public static byte[] decodePemOrBase64(String input) {
         String base64 = input
