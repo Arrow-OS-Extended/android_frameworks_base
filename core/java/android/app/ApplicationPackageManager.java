@@ -29,7 +29,6 @@ import static android.content.pm.Checksum.TYPE_WHOLE_SHA1;
 import static android.content.pm.Checksum.TYPE_WHOLE_SHA256;
 import static android.content.pm.Checksum.TYPE_WHOLE_SHA512;
 
-import android.Manifest;
 import android.annotation.CallbackExecutor;
 import android.annotation.DrawableRes;
 import android.annotation.NonNull;
@@ -810,8 +809,7 @@ public class ApplicationPackageManager extends PackageManager {
 
     @Override
     public boolean hasSystemFeature(String name, int version) {
-        return PropImitationHooks.hasSystemFeature(name,
-                mHasSystemFeatureCache.query(new HasSystemFeatureQuery(name, version)));
+        return mHasSystemFeatureCache.query(new HasSystemFeatureQuery(name, version));
     }
 
     /** @hide */
@@ -826,22 +824,7 @@ public class ApplicationPackageManager extends PackageManager {
 
     @Override
     public int checkPermission(String permName, String pkgName) {
-        int res = PermissionManager.checkPackageNamePermission(permName, pkgName, getUserId());
-        if (res != PERMISSION_GRANTED) {
-            // some Microsoft apps crash when INTERNET permission check fails, see
-            // com.microsoft.aad.adal.AuthenticationContext.checkInternetPermission() and
-            // com.microsoft.identity.client.PublicClientApplication.checkInternetPermission()
-            if (Manifest.permission.INTERNET.equals(permName)
-                    // don't rely on Context.getPackageName(), may be different from process package name
-                    && pkgName.equals(ActivityThread.currentPackageName())
-                    && pkgName.toLowerCase().contains("microsoft")
-                    && pkgName.toLowerCase().contains("com.android")
-                    && pkgName.toLowerCase().contains("google"))
-            {
-                return PERMISSION_GRANTED;
-            }
-        }
-        return res;
+        return PermissionManager.checkPackageNamePermission(permName, pkgName, getUserId());
     }
 
     @Override

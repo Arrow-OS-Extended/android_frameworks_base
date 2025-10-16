@@ -34,11 +34,6 @@
     <!-- Vendor platform signatures -->
     <java-symbol type="array" name="config_vendorPlatformSignatures" />
 
-    <!-- PropImitationHooks -->
-    <java-symbol type="array" name="config_certifiedBuildProperties" />
-    <java-symbol type="string" name="config_stockFingerprint" />
-    <java-symbol type="string" name="config_netflixSpoofModel" />
-
     <!-- Location indicator -->
     <java-symbol type="drawable" name="stat_sys_location" />
 
