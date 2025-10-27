@@ -107,6 +107,8 @@ import com.android.internal.widget.ILockSettings;
 import com.android.server.am.ActivityManagerService;
 import com.android.server.ambientcontext.AmbientContextManagerService;
 import com.android.server.appbinding.AppBindingService;
+import com.android.server.arrow.CustomDeviceConfigService;
+import com.android.server.arrow.VbmetaHashService;
 import com.android.server.art.ArtManagerLocal;
 import com.android.server.attention.AttentionManagerService;
 import com.android.server.audio.AudioService;
@@ -2542,6 +2544,11 @@ public final class SystemServer implements Dumpable {
 
             t.traceBegin("StartMediaMetricsManager");
             mSystemServiceManager.startService(MediaMetricsManagerService.class);
+            t.traceEnd();
+
+            // VbmetaHashService
+            t.traceBegin("VbmetaHashService");
+            mSystemServiceManager.startService(VbmetaHashService.class);
             t.traceEnd();
         }
 
