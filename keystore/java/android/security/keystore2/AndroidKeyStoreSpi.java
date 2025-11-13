@@ -76,8 +76,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.android.internal.util.PropImitationHooks;
-
 import javax.crypto.SecretKey;
 
 /**
